@@ -1,0 +1,348 @@
+/* ---------- Paleta ---------- */
+:root {
+    --rosa-fondo: #fbe4ea;      /* fondo general */
+    --rosa: #f6c1cf;            /* detalles suaves */
+    --rojo-pastel: #e98a9b;     /* sobre y acentos */
+    --rojo-oscuro: #c9606f;     /* solapa, sello */
+    --amarillo-carta: #fff6d6;  /* papel de la carta */
+    --texto: #5a2a35;           /* vino oscuro: buen contraste sobre rosa y amarillo */
+    --texto-suave: #8a4f5c;
+
+    --fuente-titulo: "Dancing Script", cursive;
+    --fuente-texto: "Quicksand", system-ui, sans-serif;
+
+    /* Alto real de la pantalla; scripts.js lo actualiza en móviles */
+    --alto-pantalla: 100vh;
+    --margen: clamp(12px, 4vw, 24px);
+}
+
+@supports (height: 100dvh) {
+    :root { --alto-pantalla: 100dvh; }
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+button {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;       /* evita el zoom por doble toque */
+}
+
+body {
+    min-height: var(--alto-pantalla);
+    background:
+        radial-gradient(circle at 20% 15%, #fff1f5 0%, transparent 45%),
+        radial-gradient(circle at 85% 90%, #f9d3dd 0%, transparent 50%),
+        var(--rosa-fondo);
+    color: var(--texto);
+    font-family: var(--fuente-texto);
+    display: grid;
+    place-items: center;
+    padding:
+        max(var(--margen), env(safe-area-inset-top))
+        max(16px, env(safe-area-inset-right))
+        max(var(--margen), env(safe-area-inset-bottom))
+        max(16px, env(safe-area-inset-left));
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+}
+
+.escena {
+    width: 100%;
+    display: grid;
+    place-items: center;
+}
+
+/* ---------- Pantalla inicial ---------- */
+.inicio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(16px, 5vh, 28px);
+    text-align: center;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.inicio.oculto {
+    opacity: 0;
+    transform: scale(0.95);
+    pointer-events: none;
+}
+
+.pista {
+    font-family: var(--fuente-titulo);
+    font-size: clamp(1.6rem, 6vw, 2.4rem);
+    color: var(--rojo-oscuro);
+}
+
+.pista--suave {
+    font-family: var(--fuente-texto);
+    font-size: clamp(0.85rem, 3.5vw, 0.95rem);
+    color: var(--texto-suave);
+    animation: latido 2.4s ease-in-out infinite;
+}
+
+/* ---------- Sobre ---------- */
+.sobre {
+    position: relative;
+    /* 90vh limita el alto (2/3 del ancho) en pantallas apaisadas */
+    width: min(320px, 82vw, 90vh);
+    aspect-ratio: 3 / 2;
+    border: none;
+    background: none;
+    cursor: pointer;
+    perspective: 900px;
+    transition: transform 0.3s ease;
+}
+
+@media (hover: hover) {
+    .sobre:hover {
+        transform: translateY(-4px);
+    }
+}
+
+.sobre:active {
+    transform: scale(0.98);
+}
+
+.sobre:focus-visible {
+    outline: 3px solid var(--rojo-oscuro);
+    outline-offset: 8px;
+    border-radius: 6px;
+}
+
+.sobre > span {
+    position: absolute;
+    inset: 0;
+}
+
+.sobre__fondo {
+    background: var(--rojo-pastel);
+    border-radius: 6px;
+    box-shadow: 0 14px 30px rgba(201, 96, 111, 0.25);
+}
+
+.sobre__papel {
+    inset: 8px 14px auto !important;
+    height: 85%;
+    background: var(--amarillo-carta);
+    border-radius: 4px;
+    transition: transform 0.7s ease 0.35s;
+    z-index: 1;
+}
+
+.sobre__bolsillo {
+    background: #ee9eac;
+    clip-path: polygon(0 0, 50% 52%, 100% 0, 100% 100%, 0 100%);
+    border-radius: 6px;
+    z-index: 2;
+}
+
+.sobre__solapa {
+    height: 58%;
+    background: var(--rojo-oscuro);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: top center;
+    transition: transform 0.5s ease, z-index 0s linear 0.25s;
+    z-index: 3;
+}
+
+.sobre__sello {
+    inset: auto !important;
+    top: 50%;
+    left: 50%;
+    width: clamp(34px, 14%, 48px);
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--rosa);
+    color: var(--rojo-oscuro);
+    font-size: clamp(1rem, 4vw, 1.3rem);
+    box-shadow: 0 3px 8px rgba(90, 42, 53, 0.2);
+    z-index: 4;
+    transition: opacity 0.3s ease;
+}
+
+/* Sobre abierto */
+.sobre.abierto .sobre__solapa {
+    transform: rotateX(180deg);
+    z-index: 0;
+}
+
+.sobre.abierto .sobre__papel {
+    transform: translateY(-45%);
+}
+
+.sobre.abierto .sobre__sello {
+    opacity: 0;
+}
+
+/* ---------- Carta ---------- */
+.carta {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    width: min(440px, calc(100% - 32px));
+    height: fit-content;
+    max-height: calc(var(--alto-pantalla) - 2 * var(--margen));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    background: var(--amarillo-carta);
+    border-radius: 10px;
+    padding: clamp(22px, 6vw, 32px) clamp(18px, 6vw, 28px);
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(201, 96, 111, 0.25);
+    opacity: 0;
+    transform: translateY(40px) scale(0.96);
+    pointer-events: none;
+    transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.carta.visible {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+}
+
+.carta__titulo {
+    font-family: var(--fuente-titulo);
+    font-weight: 600;
+    font-size: clamp(1.8rem, 7vw, 2.6rem);
+    color: var(--rojo-oscuro);
+    margin: clamp(12px, 3vh, 18px) 0 12px;
+}
+
+.carta__texto {
+    font-size: clamp(0.95rem, 3.6vw, 1.05rem);
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+
+.carta__firma {
+    font-family: var(--fuente-titulo);
+    font-size: clamp(1.25rem, 5vw, 1.5rem);
+    color: var(--texto-suave);
+    margin-top: 20px;
+    line-height: 1.3;
+}
+
+.carta__cerrar {
+    margin-top: 24px;
+    min-height: 44px;                 /* tamaño cómodo para tocar */
+    padding: 8px 20px;
+    border: 1.5px solid var(--rojo-pastel);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--texto);
+    font-family: var(--fuente-texto);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.carta__cerrar:focus-visible,
+.carta__cerrar:active {
+    background: var(--rosa);
+    outline: none;
+}
+
+@media (hover: hover) {
+    .carta__cerrar:hover {
+        background: var(--rosa);
+    }
+}
+
+/* ---------- Foto con recorte de corazón ---------- */
+.foto-marco {
+    width: clamp(120px, 42vw, 170px);
+    aspect-ratio: 1;
+    margin: 0 auto;
+    padding: clamp(5px, 1.6vw, 7px); /* grosor del marco */
+    background: var(--rojo-pastel);
+    clip-path: url(#corazon);
+}
+
+.foto {
+    width: 100%;
+    height: 100%;
+    background: var(--rosa);
+    clip-path: url(#corazon);
+    display: grid;
+    place-items: center;
+}
+
+.foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;               /* recorta la foto sin deformarla */
+}
+
+.foto__vacia {
+    font-size: clamp(0.7rem, 2.8vw, 0.8rem);
+    color: var(--texto-suave);
+    margin-top: -10px;
+}
+
+/* ---------- Pantallas grandes ---------- */
+@media (min-width: 768px) {
+    .carta {
+        width: 480px;
+    }
+
+    .foto-marco {
+        width: 190px;
+    }
+
+    .carta__texto {
+        font-size: 1.1rem;
+    }
+}
+
+/* ---------- Móvil en horizontal (poca altura) ---------- */
+@media (orientation: landscape) and (max-height: 500px) {
+    .carta {
+        width: min(680px, calc(100% - 32px));
+        display: grid;
+        grid-template-columns: auto 1fr;
+        column-gap: 28px;
+        align-items: center;
+        padding: 20px 28px;
+    }
+
+    .foto-marco {
+        width: min(150px, 38vh);
+        grid-row: 1 / span 5;
+    }
+
+    .carta__titulo {
+        margin-top: 0;
+    }
+
+    .carta__firma {
+        margin-top: 8px;
+    }
+
+    .carta__cerrar {
+        margin: 12px auto 0;
+    }
+}
+
+/* ---------- Animaciones ---------- */
+@keyframes latido {
+    0%, 100% { opacity: 0.6; }
+    50%      { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition-duration: 0.01ms !important;
+        transition-delay: 0s !important;
+    }
+}

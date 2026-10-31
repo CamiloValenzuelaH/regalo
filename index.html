@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#fbe4ea">
+    <title>Para ti ♥</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Forma de corazón reutilizable para recortar la foto -->
+    <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+        <defs>
+            <clipPath id="corazon" clipPathUnits="objectBoundingBox">
+                <path d="M0.5,0.25 C0.5,0.25 0.43,0.05 0.25,0.05 C0.08,0.05 0,0.2 0,0.35 C0,0.6 0.25,0.78 0.5,0.97 C0.75,0.78 1,0.6 1,0.35 C1,0.2 0.92,0.05 0.75,0.05 C0.57,0.05 0.5,0.25 0.5,0.25 Z"/>
+            </clipPath>
+        </defs>
+    </svg>
+
+    <main class="escena">
+        <!-- Pantalla 1: el sobre cerrado -->
+        <section class="inicio" id="inicio">
+            <p class="pista">Tienes una carta ♥</p>
+
+            <button class="sobre" id="sobre" type="button" aria-label="Abrir la carta">
+                <span class="sobre__fondo"></span>
+                <span class="sobre__papel"></span>
+                <span class="sobre__bolsillo"></span>
+                <span class="sobre__solapa"></span>
+                <span class="sobre__sello">♥</span>
+            </button>
+
+            <p class="pista pista--suave">Toca el sobre para abrirla</p>
+        </section>
+
+        <!-- Pantalla 2: la carta abierta -->
+        <article class="carta" id="carta" aria-hidden="true">
+            <div class="foto-marco">
+                <div class="foto">
+                    <img src="foto.png" alt="Nuestra foto" decoding="async">
+                </div>
+            </div>
+
+            <h1 class="carta__titulo">Mi amor, Jeraldy,</h1>
+
+            <p class="carta__texto">
+                Gracias por llenar mis días de risas, calma y cariño.
+                Contigo todo es más bonito, y cada momento a tu lado
+                se convierte en mi recuerdo favorito.
+            </p>
+            <p class="carta__texto">
+                Te quiero hoy, mañana y todos los días que vienen.
+            </p>
+
+            <p class="carta__firma">Con todo mi amor,<br>Camilo</p>
+
+            <button class="carta__cerrar" id="cerrar" type="button">Guardar la carta</button>
+        </article>
+    </main>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
